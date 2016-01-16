@@ -73,6 +73,6 @@ class backprop():
 bp = backprop(len(X[0]), len(Y[0]), 4)
 bp.train(X, Y)
 
-print ("Output (line) - should be 0 : {0}".format(bp.classify([0.5] * 1000)))
-print ("Output (sawtooth) - should be 0 : {0}".format(bp.classify([(x / 10.0) % 1 for x in range(1000)])))
-print ("Output (offset sin) - should be 1 : {0}".format(bp.classify([sin((x+10)/10) for x in range(1000)])))
+print ("Output (line) - should be 0 : {:1.3f}".format(bp.classify([0.5] * 1000)[0]))
+print ("Output (sawtooth) - should be 0 : {:1.3f}".format(bp.classify([(x / 10.0) % 1 for x in range(1000)])[0]))
+print ("Output (offset sin) - should be 1 : {:1.3f}".format(bp.classify([sin((x+10)/10) for x in range(1000)])[0]))
