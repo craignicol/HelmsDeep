@@ -61,7 +61,7 @@ class backprop():
     def train(self, inputs, outputs):
         for x in range(self.training_cycles):
             input_subset = np.array([inputs[x % len(inputs):x+self.max_training_examples % len(inputs)]])
-            output_subset = np.array([outputs[x % len(inputs):x+self.max_training_examples % len(inputs)]]).T            
+            output_subset = np.array([outputs[x % len(inputs):x+self.max_training_examples % len(inputs)]]).T
             error = self.train_once(inputs, outputs)
             if (x % 10000) == 0:
                 print ("Error: " + str(np.mean(np.abs(error))))
