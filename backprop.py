@@ -18,9 +18,11 @@ class backprop():
     training_cycles = 60000
     max_training_examples = 2
     
-    def __init__(self, input_size, output_size, hidden_nodes, seed = 1):
+    def __init__(self, input_size, output_size, hidden_nodes, seed = 1, training_cycles = 60000, max_training_examples = 0):
         np.random.seed(seed)
-    
+        self.training_cycles = training_cycles
+        self.max_training_examples = max_training_examples
+        
         # Let's define 2 hidden layers
         # input (X) * weights1 * weights2 = output (Y)
         # X contains 783 columns, Y is a single value, scaled from 0 to 9 from the standard 0 to 1
@@ -59,9 +61,20 @@ class backprop():
         return l2_error
     
     def train(self, inputs, outputs):
+        assert(len(inputs) == len(outputs))
+        training_size = len(inputs)
+        
+        if self.max_training_examples > len(inputs):
+            max_training_examples = len(inputs)
+        else:
+            max_training_examples = self.max_training_examples
+            
         for x in range(self.training_cycles):
-            input_subset = np.array([inputs[x % len(inputs):x+self.max_training_examples % len(inputs)]])
-            output_subset = np.array([outputs[x % len(inputs):x+self.max_training_examples % len(inputs)]]).T
+            start = x % training_size
+            end = min(start + max_training_examples, training_size)
+            
+            input_subset = np.array([inputs[start:end]])
+            output_subset = np.array([outputs[start:end]]).T
             error = self.train_once(inputs, outputs)
             if (x % 10000) == 0:
                 print ("Error: " + str(np.mean(np.abs(error))))
@@ -69,7 +82,7 @@ class backprop():
     def classify(self, X):
         return self.propagate(X)[0]
 
-bp = backprop(len(X[0]), len(Y[0]), 4)
+bp = backprop(len(X[0]), len(Y[0]), 4, max_training_examples = 10)
 bp.train(X, Y)
 
 print ("Output (line) - should be 0 : {:1.3f}".format(bp.classify([0.5] * 1000)[0]))
