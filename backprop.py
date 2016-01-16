@@ -1,12 +1,6 @@
 import numpy as np
 from math import sin, cos
 
-def nonlin(x,deriv=False):
-    if(deriv==True):
-        return x*(1-x)
-    
-    return 1/(1+np.exp(-x))
-    
 X = np.array([[sin(x/10) for x in range(1000)],
             [1] * (1000),
             [cos(x/10) for x in range(1000)],
@@ -20,6 +14,9 @@ Y = np.array([[1],
 class backprop():
     weights1 = []
     weights2 = []
+    
+    training_cycles = 60000
+    max_training_examples = 2
     
     def __init__(self, input_size, output_size, hidden_nodes, seed = 1):
         np.random.seed(seed)
@@ -39,8 +36,8 @@ class backprop():
         # input (X) * weights1 * weights2 = output (Y)
         # Feed forward through layers 0, 1, and 2
         l0 = X
-        l1 = nonlin(np.dot(l0,self.weights1))
-        l2 = nonlin(np.dot(l1,self.weights2))
+        l1 = self.nonlin(np.dot(l0,self.weights1))
+        l2 = self.nonlin(np.dot(l1,self.weights2))
         
         return (l2, l1)
     
@@ -49,11 +46,11 @@ class backprop():
         
         # level 2 learning
         l2_error = Y - l2
-        l2_delta = l2_error*nonlin(l2,deriv=True)
+        l2_delta = l2_error * self.nonlin(l2,deriv=True)
         
         # level 1 learning
         l1_error = l2_delta.dot(self.weights2.T)
-        l1_delta = l1_error * nonlin(l1,deriv=True)
+        l1_delta = l1_error * self.nonlin(l1,deriv=True)
         
         # update weights
         self.weights2 += l1.T.dot(l2_delta)
@@ -62,7 +59,9 @@ class backprop():
         return l2_error
     
     def train(self, inputs, outputs):
-        for x in range(60000):
+        for x in range(self.training_cycles):
+            input_subset = np.array([inputs[x % len(inputs):x+self.max_training_examples % len(inputs)]])
+            output_subset = np.array([outputs[x % len(inputs):x+self.max_training_examples % len(inputs)]]).T            
             error = self.train_once(inputs, outputs)
             if (x % 10000) == 0:
                 print ("Error: " + str(np.mean(np.abs(error))))
