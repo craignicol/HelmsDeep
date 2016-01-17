@@ -65,13 +65,19 @@ class backprop():
         self.weights2 += l1.T.dot(l2_delta)
         self.weights1 += l0.T.dot(l1_delta)
         
+        if self.weights3 is not None:
+            return l3_error
         return l2_error
     
     def train(self, inputs, outputs):
         assert(len(inputs) == len(outputs))
         training_size = len(inputs)
         
-        if self.max_training_examples > len(inputs):
+        print("input shape : {0}, weights1 shape : {1}, weights2 shape : {2}, weights3 shape : {3}, outputs shape : {4}".format(
+            inputs.shape, self.weights1.shape, self.weights2.shape, 
+            self.weights3.shape if self.weights3 != None else "-", outputs.shape))
+        
+        if self.max_training_examples > len(inputs) or self.max_training_examples == 0:
             max_training_examples = len(inputs)
         else:
             max_training_examples = self.max_training_examples
@@ -83,7 +89,7 @@ class backprop():
             input_subset = np.array([inputs[start:end]])
             output_subset = np.array([outputs[start:end]]).T
             error = self.train_once(inputs, outputs)
-            if (x % 10000) == 0:
+            if (x % 10) == 0:
                 print ("Error: " + str(np.mean(np.abs(error))))
     
     def classify(self, X):
@@ -93,12 +99,12 @@ if __name__ == '__main__':
     X = np.array([[sin(x/10) for x in range(1000)],
                 [1] * (1000),
                 [cos(x/10) for x in range(1000)],
-                [0] * (1000)] * 10000)
+                [0] * (1000)])
                 
     Y = np.array([[1],
                 [0],
                 [1],
-                [0]] * 10000)
+                [0]])
     
     bp = backprop(len(X[0]), len(Y[0]), 4, hidden_nodes_2 = 4, max_training_examples = 10)
     bp.train(X, Y)
