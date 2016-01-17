@@ -24,15 +24,14 @@ class backprop():
         self.training_cycles = training_cycles
         self.max_training_examples = max_training_examples
         
-        # Let's define 2 hidden layers
-        # input (X) * weights1 * weights2 = output (Y)
-        # X contains 783 columns, Y is a single value, scaled from 0 to 9 from the standard 0 to 1
-        self.weights1 = np.random.random((input_size, hidden_nodes_1))
+        # Let's define 2 or 3 hidden layers
+        # input (X) * weights1 * weights2 (* weights3) = output (Y)
+        self.weights1 = 2 * np.random.random((input_size, hidden_nodes_1)) - 1
         if hidden_nodes_2 == 0:
-            self.weights2 = np.random.random((hidden_nodes_1, output_size))
+            self.weights2 = 2 * np.random.random((hidden_nodes_1, output_size)) - 1
         else:
-            self.weights2 = np.random.random((hidden_nodes_1, hidden_nodes_2))
-            self.weights3 = np.random.random((hidden_nodes_2, output_size))
+            self.weights2 = 2 * np.random.random((hidden_nodes_1, hidden_nodes_2)) - 1
+            self.weights3 = 2 * np.random.random((hidden_nodes_2, output_size)) - 1
     
     def nonlin(self,x,deriv=False):
         if(deriv==True):
