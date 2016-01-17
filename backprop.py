@@ -1,16 +1,6 @@
 import numpy as np
 from math import sin, cos
 
-X = np.array([[sin(x/10) for x in range(1000)],
-            [1] * (1000),
-            [cos(x/10) for x in range(1000)],
-            [0] * (1000)])
-                
-Y = np.array([[1],
-            [0],
-            [1],
-            [0]])
-
 class backprop():
     weights1 = []
     weights2 = []
@@ -99,9 +89,20 @@ class backprop():
     def classify(self, X):
         return self.propagate(X)[0]
 
-bp = backprop(len(X[0]), len(Y[0]), 4, hidden_nodes_2 = 4, max_training_examples = 10)
-bp.train(X, Y)
+if __name__ == '__main__':
+    X = np.array([[sin(x/10) for x in range(1000)],
+                [1] * (1000),
+                [cos(x/10) for x in range(1000)],
+                [0] * (1000)] * 10000)
+                
+    Y = np.array([[1],
+                [0],
+                [1],
+                [0]] * 10000)
+    
+    bp = backprop(len(X[0]), len(Y[0]), 4, hidden_nodes_2 = 4, max_training_examples = 10)
+    bp.train(X, Y)
 
-print ("Output (line) - should be 0 : {:1.3f}".format(bp.classify([0.5] * 1000)[0]))
-print ("Output (sawtooth) - should be 0 : {:1.3f}".format(bp.classify([(x / 10.0) % 1 for x in range(1000)])[0]))
-print ("Output (offset sin) - should be 1 : {:1.3f}".format(bp.classify([sin((x+10)/10) for x in range(1000)])[0]))
+    print ("Output (line) - should be 0 : {:1.3f}".format(bp.classify([0.5] * 1000)[0]))
+    print ("Output (sawtooth) - should be 0 : {:1.3f}".format(bp.classify([(x / 10.0) % 1 for x in range(1000)])[0]))
+    print ("Output (offset sin) - should be 1 : {:1.3f}".format(bp.classify([sin((x+10)/10) for x in range(1000)])[0]))
